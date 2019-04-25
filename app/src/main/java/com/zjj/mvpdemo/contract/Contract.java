@@ -1,15 +1,10 @@
-package com.zjj.mvpdemo.module.contract;
+package com.zjj.mvpdemo.contract;
 
 import android.content.Intent;
 
-import com.zjj.mvpdemo.module.model.WordModel;
+import com.zjj.mvpdemo.model.WordModel;
 
 import java.util.List;
-
-import io.reactivex.Observable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
 
 public interface Contract {
     interface Model {

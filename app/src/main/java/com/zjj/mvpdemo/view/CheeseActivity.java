@@ -1,4 +1,4 @@
-package com.zjj.mvpdemo.module.view;
+package com.zjj.mvpdemo.view;
 
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -10,13 +10,12 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import com.zjj.mvpdemo.CheeseSearchEngine;
 import com.zjj.mvpdemo.R;
-import com.zjj.mvpdemo.module.contract.Contract;
-import com.zjj.mvpdemo.module.model.WordModel;
-import com.zjj.mvpdemo.module.presenter.CheesePresenter;
+import com.zjj.mvpdemo.contract.Contract;
+import com.zjj.mvpdemo.model.WordModel;
+import com.zjj.mvpdemo.presenter.CheesePresenter;
+import com.zjj.mvpdemo.util.CheeseSearchEngine;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -24,25 +23,17 @@ import java.util.concurrent.TimeUnit;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Cancellable;
-import io.reactivex.functions.Consumer;
-import io.reactivex.functions.Function;
 import io.reactivex.functions.Predicate;
-import io.reactivex.schedulers.Schedulers;
 
 public class CheeseActivity extends BaseActivity {
 
-    private CheesePresenter mCheesePresenter = new CheesePresenter();
+    private CheesePresenter mCheesePresenter = new CheesePresenter("http://120.79.229.78/zjj/");
 
-    private CheeseSearchEngine mCheeseSearchEngine;
     private EditText mQueryEditText;
     private Button mSearchButton;
     private CheeseAdapter mAdapter;
     private ProgressBar mProgressBar;
-
-    public Disposable disposable;
 
     @Override
     protected Contract.Presenter createPresenter() {
@@ -61,37 +52,11 @@ public class CheeseActivity extends BaseActivity {
         mSearchButton = (Button) findViewById(R.id.search_button);
         mProgressBar = (ProgressBar) findViewById(R.id.progress_bar);
 
-        List<String> cheeses = Arrays.asList(getResources().getStringArray(R.array.cheeses));
-        mCheeseSearchEngine = new CheeseSearchEngine(cheeses);
 
         Observable<String> buttonClickStream = createButtonClickObservable();
         Observable<String> textChangeStream = createTextChangeObservable();
 
-        disposable = mCheesePresenter.search(buttonClickStream, textChangeStream)
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnNext(new Consumer<String>() {
-                    @Override
-                    public void accept(String s) {
-                        showProgressBar();
-                    }
-                })
-                .observeOn(Schedulers.io())
-                .map(new Function<String, List<String>>() {
-                    @Override
-                    public List<String> apply(String query) {
-                        return mCheeseSearchEngine.search(query);
-                    }
-                })
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<List<String>>() {
-                    @Override
-                    public void accept(List<String> result) {
-                        hideProgressBar();
-                        showResult(result);
-                    }
-                });
-
-        mCheesePresenter.setmDisposable(disposable);
+        mCheesePresenter.search(buttonClickStream, textChangeStream);
     }
 
     @Override
@@ -106,12 +71,13 @@ public class CheeseActivity extends BaseActivity {
 
     @Override
     public void onSuccess(WordModel model) {
-
+        //从网络返回的数据
+        mCheesePresenter.mCheeseSearchEngine = new CheeseSearchEngine(model, "");
     }
 
     @Override
     public void onError(String result) {
-
+        Toast.makeText(CheeseActivity.this, result, Toast.LENGTH_SHORT).show();
     }
 
     @Override

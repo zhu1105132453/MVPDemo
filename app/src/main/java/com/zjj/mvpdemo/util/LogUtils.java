@@ -1,6 +1,8 @@
-package com.zjj.mvpdemo;
+package com.zjj.mvpdemo.util;
 
 import android.util.Log;
+
+import com.zjj.mvpdemo.BuildConfig;
 
 /**
  * Created by gaosheng on 2016/7/29.

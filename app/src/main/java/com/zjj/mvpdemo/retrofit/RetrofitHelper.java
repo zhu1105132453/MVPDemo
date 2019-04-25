@@ -1,4 +1,4 @@
-package com.zjj.mvpdemo.module.retrofit;
+package com.zjj.mvpdemo.retrofit;
 
 import java.net.Proxy;
 import java.util.concurrent.TimeUnit;

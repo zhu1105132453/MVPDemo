@@ -1,10 +1,10 @@
-package com.zjj.mvpdemo.module.view;
+package com.zjj.mvpdemo.view;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 
-import com.zjj.mvpdemo.module.contract.Contract;
+import com.zjj.mvpdemo.contract.Contract;
 
 public abstract class BaseActivity<T extends Contract.Presenter> extends AppCompatActivity implements Contract.View {
 
